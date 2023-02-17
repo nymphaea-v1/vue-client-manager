@@ -1,0 +1,30 @@
+@import './base.css';
+
+#app {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+a {
+  color: var(--color-text);
+  text-decoration: none;
+
+  transition: 0.4s;
+}
+
+a:hover {
+  filter: brightness(120%);
+}
+
+.reset {
+  border: none;
+
+  color: var(--color-text);
+  font-weight: inherit;
+  font-size: inherit;
+  font-family: inherit;
+  text-align: inherit;
+
+  background: none;
+}

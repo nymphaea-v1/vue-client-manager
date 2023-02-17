@@ -1,0 +1,31 @@
+:root {
+  --color-brand: #4c8bf7;
+  --color-background: #ffffff;
+  --color-border: #c9c9c9;
+  --color-text: #000000;
+  --color-error: #ff3333;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100vh;
+
+  color: var(--color-text);
+  font-size: 15px;
+  font-family: Arial, Helvetica, sans-serif;
+  line-height: 1.6;
+
+  background: var(--color-background);
+
+  transition: color 0.5s, background-color 0.5s;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

@@ -1,0 +1,1 @@
+type EntityType = 'lead' | 'contact' | 'company'
