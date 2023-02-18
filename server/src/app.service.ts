@@ -1,5 +1,5 @@
 import { HttpService } from '@nestjs/axios'
-import { Injectable } from '@nestjs/common'
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
 import { lastValueFrom, map } from 'rxjs'
 
 @Injectable()
@@ -20,19 +20,39 @@ export class AppService {
   }
 
   async create(type: keyof typeof this.PATHS) {
-    const result = await lastValueFrom(
-      this.httpService
-        .post(this.PATHS[type], [{}], {
-          baseURL: this.BASE_URL,
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + this.ACCESS_TOKEN
-          }
-        })
-        .pipe(
-          map((response) => ({ id: response.data._embedded[type][0].id, type }))
-        )
-    )
+    if (this.ACCESS_TOKEN === undefined && this.BASE_URL === undefined) {
+      throw new HttpException(
+        'Something went wrong...',
+        HttpStatus.INTERNAL_SERVER_ERROR
+      )
+    }
+
+    let result
+
+    try {
+      result = await lastValueFrom(
+        this.httpService
+          .post(this.PATHS[type], [{}], {
+            baseURL: this.BASE_URL,
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: 'Bearer ' + this.ACCESS_TOKEN
+            }
+          })
+          .pipe(
+            map((response) => ({
+              id: response.data._embedded[type][0].id,
+              type
+            }))
+          )
+      )
+    } catch (error) {
+      throw new HttpException(
+        'Something went wrong...',
+        HttpStatus.INTERNAL_SERVER_ERROR
+      )
+    }
+
     return result
   }
 

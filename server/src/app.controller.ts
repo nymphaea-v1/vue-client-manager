@@ -18,10 +18,6 @@ export class AppController {
     if (!validTypes.includes(type))
       throw new HttpException('Invalid entity type', HttpStatus.NOT_FOUND)
 
-    try {
-      return await this.appService.create(type)
-    } catch (error) {
-      throw new HttpException('Something went wrong...', HttpStatus.BAD_REQUEST)
-    }
+    return await this.appService.create(type)
   }
 }
