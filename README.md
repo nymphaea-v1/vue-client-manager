@@ -10,7 +10,6 @@
 
 ### Backend
 - NestJS
-- Axios
 
 ## Install and run the frontend:
 

@@ -1,57 +1,60 @@
+import { HttpService } from '@nestjs/axios'
 import { Injectable } from '@nestjs/common'
-import axios from 'axios'
-
-const PATHS = {
-  leads: '/api/v4/leads',
-  contacts: '/api/v4/contacts',
-  companies: '/api/v4/companies'
-}
-
-let ACCESS_TOKEN
-let BASE_URL
+import { lastValueFrom, map } from 'rxjs'
 
 @Injectable()
 export class AppService {
-  onModuleInit() {
-    login()
+  constructor(private readonly httpService: HttpService) {}
+
+  PATHS = {
+    leads: '/api/v4/leads',
+    contacts: '/api/v4/contacts',
+    companies: '/api/v4/companies'
   }
 
-  async create(type: keyof typeof PATHS) {
-    const response = await axios(PATHS[type], {
-      method: 'post',
-      baseURL: BASE_URL,
-      data: [{}],
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + ACCESS_TOKEN
-      }
-    })
+  ACCESS_TOKEN
+  BASE_URL
 
-    return { id: response.data._embedded[type][0].id, type }
+  async onModuleInit() {
+    await this.login()
   }
-}
 
-const login = () => {
-  if (
-    process.env.CLIENT_ID === undefined ||
-    process.env.SOURCE_URL === undefined
-  )
-    return
+  async create(type: keyof typeof this.PATHS) {
+    const result = await lastValueFrom(
+      this.httpService
+        .post(this.PATHS[type], [{}], {
+          baseURL: this.BASE_URL,
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + this.ACCESS_TOKEN
+          }
+        })
+        .pipe(
+          map((response) => ({ id: response.data._embedded[type][0].id, type }))
+        )
+    )
+    return result
+  }
 
-  axios
-    .get(process.env.SOURCE_URL, {
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Client-Id': process.env.CLIENT_ID
-      }
-    })
-    .then((response) => {
-      const result = response.data
+  async login() {
+    if (
+      process.env.CLIENT_ID === undefined ||
+      process.env.SOURCE_URL === undefined
+    )
+      return
 
-      ACCESS_TOKEN = result.access_token
-      BASE_URL = 'https://' + result.base_domain
-    })
-    .catch((error) => {
-      console.log(error)
-    })
+    const data = await lastValueFrom(
+      this.httpService
+        .get(process.env.SOURCE_URL, {
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Client-Id': process.env.CLIENT_ID
+          }
+        })
+        .pipe(map((response) => response.data))
+    )
+
+    this.ACCESS_TOKEN = data.access_token
+    this.BASE_URL = 'https://' + data.base_domain
+  }
 }
