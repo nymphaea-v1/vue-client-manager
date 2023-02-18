@@ -3,7 +3,7 @@
 ## Tech stack
 
 ### Frontend
-- Vue.js 3
+- Vue.js 3 (Composition API)
 - Pinia
 - TypeScript
 - Axios
@@ -11,7 +11,7 @@
 ### Backend
 - NestJS
 
-## Install and run the frontend:
+## Install and run the frontend
 
 ### Install the dependencies
 ```bash
@@ -29,7 +29,7 @@ npm run dev
 npm run build
 ```
 
-## Install and run the backend:
+## Install and run the backend
 
 ### Install the dependencies
 ```bash
